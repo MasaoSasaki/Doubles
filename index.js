@@ -1,6 +1,6 @@
 // https://www.youtube.com/watch?v=K2cJofUJVO8&t=534s 45:00"
 
-const isDevelop = false
+const isDevelop = true
 
 getDate = () => {
   formatTime = (tmpTime) => {
@@ -25,6 +25,7 @@ getPattern = (num) => {
 createMatch = (Players, Rest) => {
   match = [...Rest]
   while(match.length < Players) {
+    isDevelop && console.log("Match生成中...")
     a = Math.floor( Math.random() * Players ) + 1
     if (match.find(num => num === a)) continue;
     match[match.length] = a
@@ -59,6 +60,7 @@ let i = 0, a;
 while(MatchList.length < Pattern) {
   // ペア作成
   let Match = createMatch(Players, Rest);
+  isDevelop && console.log("MatchList生成中...")
   if (deleteDuplicateConditions(Players, Match)) {
     isRestSave = true
     continue;
