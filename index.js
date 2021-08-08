@@ -1,5 +1,7 @@
 // https://www.youtube.com/watch?v=K2cJofUJVO8&t=534s 45:00"
 
+const isDevelop = false
+
 getDate = () => {
   formatTime = (tmpTime) => {
     let time = tmpTime.toString();
@@ -20,47 +22,58 @@ getPattern = (num) => {
   return Pattern = num * (num - 1) * (num - 2) * (num - 3) / 8
 }
 
-createMatch = (people) => {
+createMatch = (Players, Rest) => {
   let match = new Array
-  while(match.length < 4) {
-    a = Math.floor( Math.random() * people ) + 1
+  while(match.length < Players) {
+    while (i < Rest.length) {
+      match[match.length] = Rest[0]
+      i++
+    }
+    a = Math.floor( Math.random() * Players ) + 1
     if (match.find(num => num === a)) continue;
-    match[i] = a
-    i++
+    match[match.length] = a
   }
   i = 0
   return match;
 }
 
-console.log(getDate())
+deleteDuplicateConditions = (Players, Match) => {
+  switch(Players) {
+    case 4:
+      return MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[0]) && MatchI.slice(0, 2).includes(Match[1]) || !MatchI.slice(0, 2).includes(Match[0]) && !MatchI.slice(0, 2).includes(Match[1]))
+    case 5:
+      return MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[0]) && MatchI.slice(0, 2).includes(Match[1]) && MatchI.slice(2, 4).includes(Match[2]) && MatchI.slice(2, 4).includes(Match[3])) || MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[2]) && MatchI.slice(0, 2).includes(Match[3]) && MatchI.slice(2, 4).includes(Match[0]) && MatchI.slice(2, 4).includes(Match[1]))
+    default:
+      console.log(Players)
+  }
+}
+
+isDevelop && console.log(getDate())
 
 // 入力値
-let people = 4  //　人数
+let Players = 4  //　人数
+let Rest = new Array
 
 let MatchList = new Array
 let Pattern;
-Pattern = getPattern(people)
+Pattern = getPattern(Players)
+let isRestSave = false
 
-let i = 0, j=0, a;
+let i = 0, a;
 while(MatchList.length < Pattern) {
-
   // ペア作成
-  let Match = createMatch(people);
-  if (MatchList.find(MatchI => MatchI.toString() === Match.toString())) {
-    i=0
-    Match = []
+  let Match = createMatch(Players, Rest);
+  if (deleteDuplicateConditions(Players, Match)) {
+    isRestSave = true
+    Rest = Rest
     continue;
+  } else {
+    Rest = Match.slice(4)
   }
-
-  if (MatchList.find(MatchI => MatchI.slice(0,2).includes(Match[0]) && MatchI.slice(0,2).includes(Match[1]) || !MatchI.slice(0,2).includes(Match[0]) && !MatchI.slice(0,2).includes(Match[1]))) {
-    i=0
-    Match = []
-    continue;
-  }
-  MatchList[j] = Match
-  j++
+  MatchList[MatchList.length] = Match
+  isRestSave = false
 }
 
 console.log(MatchList)
 
-console.log(getDate())
+isDevelop && console.log(getDate())
