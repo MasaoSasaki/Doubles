@@ -1,5 +1,3 @@
-// https://www.youtube.com/watch?v=K2cJofUJVO8&t=534s 45:00"
-
 const isDevelop = true
 
 getDate = () => {
@@ -18,19 +16,22 @@ getDate = () => {
   return `${year}/${month}/${day} ${hour}:${minute}:${second}`
 }
 
+isDevelop && console.log(getDate())
+
 getPattern = (num) => {
   return Pattern = num * (num - 1) * (num - 2) * (num - 3) / 8
 }
 
-createMatch = (Players, Rest) => {
-  match = [...Rest]
-  while(match.length < Players) {
-    isDevelop && console.log("Match生成中...")
-    a = Math.floor( Math.random() * Players ) + 1
-    if (match.find(num => num === a)) continue;
-    match[match.length] = a
+createMatch = (Players, RestPlayers) => {
+  let match = new Array
+  let i = 0;
+  match[Players - 1] = RestPlayers[0]
+  while(match.includes(undefined)) {
+    player = Math.floor( Math.random() * Players ) + 1
+    if (match.find(index => index === player)) continue;
+    match[i] = player
+    i = (i+1)|0
   }
-  i = 0
   return match;
 }
 
@@ -45,30 +46,29 @@ deleteDuplicateConditions = (Players, Match) => {
   }
 }
 
-isDevelop && console.log(getDate())
-
 // 入力値
-let Players = 5  //　人数
-let Rest = new Array
+const Players = 5
 
+let i = Players
+const MatchPattern = getPattern(Players)
+
+// 休憩する順番を降順で作成
+let RestPlayers = new Array
+while (RestPlayers.length < MatchPattern) {
+  i = i === 0 ? Players : i
+  RestPlayers[RestPlayers.length] = i
+  i = (i - 1) | 0
+}
+
+// 組み合わせリストの作成
 let MatchList = new Array
-let Pattern;
-Pattern = getPattern(Players)
-let isRestSave = false
+while(MatchList.length < MatchPattern) {
 
-let i = 0, a;
-while(MatchList.length < Pattern) {
-  // ペア作成
-  let Match = createMatch(Players, Rest);
-  isDevelop && console.log("MatchList生成中...")
-  if (deleteDuplicateConditions(Players, Match)) {
-    isRestSave = true
-    continue;
-  }
-  Rest = Match.slice(4)
-  isDevelop && console.log(Match, Rest)
+  // 組み合わせ作成
+  let Match = createMatch(Players, RestPlayers)
+  if (deleteDuplicateConditions(Players, Match)) continue;
   MatchList[MatchList.length] = Match
-  isRestSave = false
+  RestPlayers.shift()
 }
 
 isDevelop && console.log(MatchList)
