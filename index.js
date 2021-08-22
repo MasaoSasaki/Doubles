@@ -1,7 +1,18 @@
+import { Create4Players } from "./4players.js";
+
+
+// 入力値
+const Players = 4
+switch (Players) {
+  case 4: {
+    Create4Players();
+  }
+}
+
 const isDevelop = true
 
-getDate = () => {
-  formatTime = (tmpTime) => {
+const getDate = () => {
+  const formatTime = (tmpTime) => {
     let time = tmpTime.toString();
     if(time.length === 1) return '0' + time;
     return time;
@@ -18,11 +29,11 @@ getDate = () => {
 
 isDevelop && console.log(getDate())
 
-getPattern = (num) => {
-  return Pattern = num * (num - 1) * (num - 2) * (num - 3) / 8
+const getPattern = (num) => {
+  return num * (num - 1) * (num - 2) * (num - 3) / 8
 }
 
-createMatch = (Players, RestPlayersList, i) => {
+const createMatch = (Players, RestPlayersList, i) => {
   let match = new Array(Players)
   // let matchIndex = Math.floor( Math.random() * 4 )
   switch (Players) {
@@ -42,7 +53,7 @@ createMatch = (Players, RestPlayersList, i) => {
     //   i = (i+1)|0
     //   continue
     // }
-    player = Math.floor( Math.random() * Players ) + 1
+    let player = Math.floor( Math.random() * Players ) + 1
     if (match.find(index => index === player)) continue;
     match[i] = player
     i = (i + 1) | 0
@@ -52,7 +63,7 @@ createMatch = (Players, RestPlayersList, i) => {
   return match;
 }
 
-deleteDuplicateConditions = (Players, Match) => {
+const deleteDuplicateConditions = (Players, Match) => {
   switch(Players) {
     case 4:
       return MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[0]) && MatchI.slice(0, 2).includes(Match[1]) || !MatchI.slice(0, 2).includes(Match[0]) && !MatchI.slice(0, 2).includes(Match[1]))
@@ -66,8 +77,9 @@ deleteDuplicateConditions = (Players, Match) => {
   }
 }
 
-createRestPlayersList = (Players) => {
+const createRestPlayersList = (Players) => {
   let RestPlayersList = new Array
+  let prevRestPair = new Array
   switch (Players) {
     case 6: {
       while (RestPlayersList.length < 15) {
@@ -80,26 +92,37 @@ createRestPlayersList = (Players) => {
             if (RestCycle[0] && RestCycle[0].includes(RestPlayer)) continue;
             if (RestCycle[1] && RestCycle[1].includes(RestPlayer)) continue;
             if (RestCycle[2] && RestCycle[2].includes(RestPlayer)) continue;
+            if (prevRestPair && prevRestPair.includes(RestPlayer)) continue;
             RestPair[RestPair.length] = RestPlayer
             if (!RestPair[1]) continue;
-            if (RestPair[0] && RestCycle[0]) {
+            console.log({RestPair})
+            if (RestPlayersList[0]) {
               let duplicate = 0; // duplicateが4を超えたらRestPairを初期化してcontinue
               let ReverseRestPair = [...RestPair]
               ReverseRestPair.splice(0, 2, RestPair[1], RestPair[0])
-              console.log({RestPair})         //includesメソッドでduplicate探索用
-              console.log({ReverseRestPair})  //includesメソッドでduplicate探索用（反転）
-              // for (i = 0; i < RestCycle.length; i = (i + 1) | 0) {
-              //   for (j = 0; j < RestPair.length; j = (j + 1) | 0) {
-              //     if (RestCycle[i].includes(RestPair) || RestCycle[i].includes(RestPair.splice()))
-              //   }
-              // }
+            //   // console.log({RestPair})         //includesメソッドでduplicate探索用
+              // console.log(RestPair.toString(), ReverseRestPair.toString())  //includesメソッドでduplicate探索用（反転）
+              // let j = 0
+              for (i = 0; i < RestPlayersList.length; i = (i + 1) | 0) {
+                // console.log(RestPlayersList[i])
+                if (RestPlayersList[i].some(Pair => Pair.toString() === RestPair.toString() || Pair.toString() ===　ReverseRestPair.toString())) {
+            //       console.log(RestPlayersList[i], "重複します。")
+            //       // continue;
+                  duplicate = (duplicate + 1) | 0
+                  console.log({duplicate})
+                  if (duplicate >= 4) RestPair = [];
+                } else {
+            //       // console.log("重複しません。")
+                }
+              }
+              // console.log({duplicate})
             }
           }
-          // console.log({RestPair})
           RestCycle[RestCycle.length] = RestPair
+          prevRestPair = [...RestPair]
         }
-        if (RestPlayersList.length > 0 && (RestPlayersList[RestPlayersList.length - 1][2].includes(RestCycle[0][0]) || RestPlayersList[RestPlayersList.length - 1][2].includes(RestCycle[0][1] ))) continue;
         RestPlayersList[RestPlayersList.length] = RestCycle
+        RestCycle.length === 3 && console.log({RestCycle}, RestPlayersList.length)
       }
       // console.log(RestPlayersList)
       return RestPlayersList
@@ -121,14 +144,14 @@ createRestPlayersList = (Players) => {
 }
 
 // 入力値
-const Players = 6
 
 const MatchPattern = getPattern(Players);
 
+let i = 0
 let RestPlayersList = createRestPlayersList(Players)
+i = 0
 // 組み合わせリストの作成
 let MatchList = new Array
-let i = 0
 console.log(RestPlayersList)
 while(MatchList.length < MatchPattern) {
   // console.log({i})
@@ -162,9 +185,9 @@ while(MatchList.length < MatchPattern) {
       break
     }
   }
-  // console.log(Match, MatchList.length)
-  console.log(RestPlayersList)
-  console.log(MatchList)
+  console.log(Match, MatchList.length)
+  // console.log(RestPlayersList)
+  // console.log(MatchList)
 }
 
 isDevelop && console.log(MatchList)
