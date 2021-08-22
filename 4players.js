@@ -1,23 +1,4 @@
 export const Create4Players = () => {
-  const isDevelop = true
-
-  const getDate = () => {
-    const formatTime = (tmpTime) => {
-      let time = tmpTime.toString();
-      if(time.length === 1) return '0' + time;
-      return time;
-    }
-    const Now = new Date()
-    const year = Now.getFullYear()
-    const month = Now.getMonth() + 1
-    const day = Now.getDay()
-    const hour = formatTime(Now.getHours());
-    const minute = formatTime(Now.getMinutes());
-    const second = formatTime(Now.getSeconds());
-    return `${year}/${month}/${day} ${hour}:${minute}:${second}`
-  }
-
-  isDevelop && console.log(getDate())
 
   const getPattern = (num) => {
     return num * (num - 1) * (num - 2) * (num - 3) / 8
@@ -52,8 +33,5 @@ export const Create4Players = () => {
     if (deleteDuplicateConditions(Match)) continue;
     MatchList[MatchList.length] = Match
   }
-
-  isDevelop && console.log(MatchList)
-
-  isDevelop && console.log(getDate())
+  return MatchList
 }
