@@ -1,39 +1,45 @@
 import { Create4Players } from "./4players.js";
 import { Create5Players } from "./5players.js";
 
-const isDevelop = true
+const isDevelop = false
 
-const getDate = () => {
-  const formatTime = (tmpTime) => {
-    let time = tmpTime.toString();
-    if(time.length === 1) return '0' + time;
-    return time;
-  }
-  const Now = new Date()
-  const year = Now.getFullYear()
-  const month = Now.getMonth() + 1
-  const day = Now.getDay()
-  const hour = formatTime(Now.getHours());
-  const minute = formatTime(Now.getMinutes());
-  const second = formatTime(Now.getSeconds());
-  return `${year}/${month}/${day} ${hour}:${minute}:${second}`
-}
+// const getDate = () => {
+//   const formatTime = (tmpTime) => {
+//     let time = tmpTime.toString();
+//     if(time.length === 1) return '0' + time;
+//     return time;
+//   }
+//   const Now = new Date()
+//   const year = Now.getFullYear()
+//   const month = Now.getMonth() + 1
+//   const day = Now.getDay()
+//   const hour = formatTime(Now.getHours());
+//   const minute = formatTime(Now.getMinutes());
+//   const second = formatTime(Now.getSeconds());
+//   return `${year}/${month}/${day} ${hour}:${minute}:${second}`
+// }
 
-isDevelop && console.log(getDate())
-
+isDevelop && console.time("GenerateMatch")
 // 入力値
-const Players = 5
+const Players = Number(process.argv[2])
 switch (Players) {
   case 4: {
-    console.log(Create4Players());
+    isDevelop && console.dir(Create4Players(Players));
     break
   }
   case 5: {
-    console.log(Create5Players())
+    isDevelop && console.dir(Create5Players(Players));
     break
   }
+  case 6: {
+    isDevelop && console.warn("\u001b[33m未実装です。\u001b[0m");
+    break
+  }
+  default : {
+    isDevelop && console.error("\u001b[31m引数が確認できませんでした。\u001b[0m")
+  }
 }
-isDevelop && console.log(getDate())
+isDevelop && console.timeEnd("GenerateMatch")
 
 // const getPattern = (num) => {
 //   return num * (num - 1) * (num - 2) * (num - 3) / 8

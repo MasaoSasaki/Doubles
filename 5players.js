@@ -1,59 +1,60 @@
-export const Create5Players = () => {
-
-  const getPattern = (num) => {
-    return num * (num - 1) * (num - 2) * (num - 3) / 8
-  }
-
-  const createMatch = (Players, RestPlayersList, i) => {
-    let match = new Array(Players)
-    match[Players - 1] = RestPlayersList[i][0]
-    i = 0
-    while(match.includes(undefined)) {
-      let player = Math.floor( Math.random() * Players ) + 1
-      if (match.find(index => index === player)) continue;
-      match[i] = player
-      i = (i + 1) | 0
-    }
-    i = 0
-    return match;
-  }
-
-  const deleteDuplicateConditions = (Match) => {
-    return MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[0]) && MatchI.slice(0, 2).includes(Match[1]) && MatchI.slice(2, 4).includes(Match[2]) && MatchI.slice(2, 4).includes(Match[3])) || MatchList.find(MatchI => MatchI.slice(0, 2).includes(Match[2]) && MatchI.slice(0, 2).includes(Match[3]) && MatchI.slice(2, 4).includes(Match[0]) && MatchI.slice(2, 4).includes(Match[1]))
-  }
-
-  const createRestPlayersList = (Players) => {
-    let RestPlayersList = new Array
-    while (RestPlayersList.length < 3) {
-      let RestPlayers = new Array
-      while (RestPlayers.length < Players) {
-        let RestPlayer = Math.floor( Math.random() * Players ) + 1
-        if (RestPlayers.find(index => index === RestPlayer)) continue;
-        RestPlayers[RestPlayers.length] = RestPlayer
+export const Create5Players = (Players) => {
+  const createMatch = (MatchList) => {
+    for (i=0; i < MatchList.length; i=(i+1)|0) {
+      let arrayGamePlayers = new Array()
+      while (arrayGamePlayers.length < 4) {
+        let Player = Math.floor( Math.random() * Players ) + 1
+        if (Player === MatchList[i].BreakingPlayers) continue;
+        if (arrayGamePlayers.includes(Player)) continue;
+        arrayGamePlayers[arrayGamePlayers.length] = Player
+        if (arrayGamePlayers.length === 4 && deleteDuplicateConditions(arrayGamePlayers)) {
+          arrayGamePlayers = [];
+          continue;
+        }
+        if (arrayGamePlayers.length === 4) MatchList[i].GamePlayers = arrayGamePlayers
       }
-      if (RestPlayersList.length > 0 && RestPlayersList[RestPlayersList.length - 1][4] === RestPlayers[0]) continue
-      RestPlayersList[RestPlayersList.length] = RestPlayers
     }
-    return RestPlayersList
+    return MatchList;
   }
 
-  // 入力値
-  const Players = 5
-  const MatchPattern = getPattern(Players);
-
-  let i = 0
-  let RestPlayersList = createRestPlayersList(Players)
-  i = 0
-  // 組み合わせリストの作成
-  let MatchList = new Array
-  console.log(RestPlayersList)
-  while(MatchList.length < MatchPattern) {
-    // 組み合わせ作成
-    let Match = createMatch(Players, RestPlayersList, i)
-    if (deleteDuplicateConditions(Match)) continue;
-    MatchList[MatchList.length] = Match
-    RestPlayersList[i].shift()
-    if (MatchList.length % 5 === 0) i = (i + 1) | 0
+  // GamePlayerが重複していないか
+  const deleteDuplicateConditions = (GamePlayers) => {
+    return MatchList.find(Match => Match.GamePlayers.slice(0, 2).includes(GamePlayers[0]) && Match.GamePlayers.slice(0, 2).includes(GamePlayers[1]) && Match.GamePlayers.slice(2, 4).includes(GamePlayers[2]) && Match.GamePlayers.slice(2, 4).includes(GamePlayers[3]))
+        || MatchList.find(Match => Match.GamePlayers.slice(0, 2).includes(GamePlayers[2]) && Match.GamePlayers.slice(0, 2).includes(GamePlayers[3]) && Match.GamePlayers.slice(2, 4).includes(GamePlayers[0]) && Match.GamePlayers.slice(2, 4).includes(GamePlayers[1]))
   }
-  return MatchList
+
+  const createBreakingPlayersList = (Players) => {
+    // 休憩の順番を作成
+    let BreakingPlayersList = new Array()
+    while (BreakingPlayersList.length < 3) {
+      let BreakingPlayers = new Array()
+      while (BreakingPlayers.length < Players) {
+        let BreakingPlayer = Math.floor( Math.random() * Players ) + 1
+        if (BreakingPlayers.find(index => index === BreakingPlayer)) continue;
+        BreakingPlayers[BreakingPlayers.length] = BreakingPlayer
+      }
+      if (BreakingPlayersList.length > 0 && BreakingPlayersList[BreakingPlayersList.length - 1][4] === BreakingPlayers[0]) continue
+      BreakingPlayersList[BreakingPlayersList.length] = BreakingPlayers
+    }
+
+    // 休憩の順番をMatchList変数(配列-オブジェクト)に代入
+    for (i=0; i<3; i=(i+1)|0) {
+      for (j=0; j<5; j=(j+1)|0) {
+        let objMatch = {
+          GameNumber: 0,
+          GamePlayers: [],
+          BreakingPlayers: []
+        }
+        objMatch.GameNumber = MatchList.length + 1
+        objMatch.BreakingPlayers = BreakingPlayersList[i][j]
+        MatchList[MatchList.length] = objMatch
+      }
+    }
+    return MatchList
+  }
+
+  let MatchList = new Array()
+  let i = 0, j = 0
+  let BreakingPlayersList = createBreakingPlayersList(Players)
+  return createMatch(BreakingPlayersList)
 }
