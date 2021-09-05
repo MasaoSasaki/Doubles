@@ -1,6 +1,9 @@
 export const Create4Players = (Players) => {
-  const getPattern = (num) => {
-    return num * (num - 1) * (num - 2) * (num - 3) / 8
+  const getPattern = (Players) => {
+    let num = 5;
+    console.log(num)
+    console.log((num * (num - 1)) / ((num - 3) * (num - 2)) / 2)
+    return  Players * ( Players - 1) * ( Players - 2) * ( Players - 3) / 8
   }
   const createMatch = () => {
     let match = new Array()
