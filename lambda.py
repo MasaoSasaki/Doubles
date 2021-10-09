@@ -5,8 +5,13 @@ import platform
 import random
 import itertools
 import pprint
+import random
 
 def lambda_handler(event, context):
+  n = event['n']
+  r = event['r']
+
+# 関数宣言----------------------------------------------------
   # 順列
   def permutations_count(n, r):
     return math.factorial(n) // math.factorial(n - r)
@@ -17,98 +22,64 @@ def lambda_handler(event, context):
   def get_doubles_count(n):
     return int(combinations_count(n, 2) * combinations_count(n - 2, 2) / 2)
 
-  n = event['n']
-  r = event['r']
-  # match = list(range(1, n + 1))
-  # pair_a = []
-  # pair_b = []
-  rest_player = []
-  # match_list = [[]] * 3
-  match_list = []
-  # match_list = [{}] * permutations_count(n, n)
-  # print(len(match_list))
-  # print(match)
+  # 配列を辞書型に変換
+  def change_array_to_dictionary(array):
+    dictionary = {
+      'pair_a': [], 'pair_b': [],
+      'rest_player': []
+    }
+    dictionary['pair_a'] = array[0:2]
+    dictionary['pair_b'] = array[2:4]
+    dictionary['rest_player'] = array[4:n]
+    return dictionary
+
+  # 重複の判定条件
+  def is_duplicate_filter(a, b):
+    if a[0:2] == b[0:2] \
+    or a[2:4] == b[2:4] \
+    or a[0:2] == b[2:4] \
+    or a[2:4] == b[0:2] \
+    or a[0:2] == list(reversed(b[0:2])) \
+    or a[2:4] == list(reversed(b[2:4])) \
+    or a[0:2] == list(reversed(b[2:4])) \
+    or a[2:4] == list(reversed(b[0:2])):
+      return True
+    else: return False
+
+  # 全ての順列を作成（重複あり）
   def create_match_list_pattern(n):
+    item = 0
+    match_list = []
     n_array = list(range(1, n + 1))
-    print('n_array', n_array)
-    for _, permutation_match in enumerate(itertools.permutations(n_array)):
+    for i, permutation_match in enumerate(itertools.permutations(n_array)):
       permutation_match = list(permutation_match)
-      match = {
-        'pair_a': [], 'pair_b': [],
-        'rest_player': []
-      }
-
-      match['pair_a'] = permutation_match[0:2]
-      match['pair_b'] = permutation_match[2:4]
-      match_list.append(match)
-
-    return match_list
-
-  match_list_pattern = create_match_list_pattern(n)
-  pprint.pprint(match_list_pattern)
-
-
-  
-  # def delete_duplicate_pattern():
-  #   print()
-
-
-  def createMatches(n):
-    # pair_a.append(random.randint(1, n))
-    # second_player = random.randint(1, n)
-    # print(second_player, pair_a)
-    # pair_a.append(second_player) if second_player in pair_a else
-
-    # print (PairA)
-    # print(len(match_list))
-    # match_list = [random.sample(match, len(match)) for _ in range(get_doubles_count(n))]
-    for i, _ in enumerate(range(get_doubles_count(n))):
-      random_sample = random.sample(match, len(match))
-      if len(match_list[0]) == 0:
-        match_list[i] = random_sample
-        print(i, random_sample, '\033[34m'+"unique"+'\033[0m')
-        continue
+      if i == 0:
+        match_list.append(permutation_match)
+        item += 1
       else:
         for match_item in match_list:
-          if match_item == random_sample:
-            print(i, random_sample, '\033[31m'+"duplicate"+'\033[0m')
-            # i = i - 1
-          else:
-            print(i, random_sample, '\033[34m'+"unique"+'\033[0m')
-            match_list[i] = random_sample
+          if is_duplicate_filter(permutation_match, match_item):
+            break
+        else:
+          match_list.append(permutation_match)
+          item += 1
+    else:
+      match_list_dictionary = [change_array_to_dictionary(match_item) for match_item in match_list]
+      random.shuffle([change_array_to_dictionary(match_item) for match_item in match_list])
+    return match_list_dictionary, item
+# 関数宣言----------------------------------------------------
 
-          # print(match_item[0:2])
-          # for players in match_item:
-            # print(players)
+  match_list_pattern = create_match_list_pattern(n)
 
-      # match_list[i] = random_sample
-      # print(match_list[i])
+  pprint.pprint(match_list_pattern)
 
-    print("result:", match_list)
-    # while len(match_list) < 3:
-    #   random.shuffle(match)
-    #   match_list.append(match)
-    #   # match_list[i] = match_item
-    # print(match_list)
-    return
-
-
-  # createMatches(n)
-
-
-  factorial = "階乗: " + str(math.factorial(event['n']))
-  permutations = "順列: " + str(permutations_count(event['n'], event['r']))
-  combinations = "組み合わせ: " + str(combinations_count(event['n'], event['r']))
-  doubles_pair = "ダブルス数: " + str(int(combinations_count(n, 2) * combinations_count(n - 2, 2) / 2))
-  # print("Received event: " + json.dumps(event, indent=2))
+  factorial = "階乗: " + str(math.factorial(n))
+  permutations = "順列: " + str(permutations_count(n, r))
+  combinations = "組み合わせ: " + str(combinations_count(n, event['r']))
+  doubles_pair = "ダブルス数: " + str(get_doubles_count(n))
   print(factorial, permutations, combinations, '\033[32m'+doubles_pair+'\033[0m')
-  # print(random.randint(0, 10))
 
   return factorial, permutations, combinations
-
-
-
-
 
 if platform.system() == "Darwin":
   event = {
