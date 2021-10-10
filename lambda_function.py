@@ -6,6 +6,7 @@ import random
 import itertools
 import pprint
 import random
+import copy
 
 def lambda_handler(event, context):
   n = event['n']
@@ -65,7 +66,7 @@ def lambda_handler(event, context):
           item += 1
     else:
       match_list_dictionary = [change_array_to_dictionary(match_item) for match_item in match_list]
-      random.shuffle([change_array_to_dictionary(match_item) for match_item in match_list])
+      random.shuffle(match_list_dictionary)
     return match_list_dictionary, item
 # 関数宣言----------------------------------------------------
 
@@ -75,7 +76,7 @@ def lambda_handler(event, context):
 
   factorial = "階乗: " + str(math.factorial(n))
   permutations = "順列: " + str(permutations_count(n, r))
-  combinations = "組み合わせ: " + str(combinations_count(n, event['r']))
+  combinations = "組み合わせ: " + str(combinations_count(n, r))
   doubles_pair = "ダブルス数: " + str(get_doubles_count(n))
   print(factorial, permutations, combinations, '\033[32m'+doubles_pair+'\033[0m')
 
