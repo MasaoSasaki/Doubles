@@ -24,7 +24,9 @@ jobs:
     steps:
     - name: Secret
       run: |
-        echo "key = ${{ secrets.AWS_IAM }}"
+        echo "AWS_ACCESS_KEY_ID = ${{ secrets.AWS_ACCESS_KEY_ID }}"
+        echo "AWS_SECRET_ACCESS_KEY = ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        echo "AWS_ROLE_TO_ASSUME = ${{ secrets.AWS_ROLE_TO_ASSUME }}"
     
     - name: Checkout
       uses: actions/checkout@v2
