@@ -25,14 +25,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Get S3 Bckets
-      run: aws s3 ls --region ap-northeast-3
-      
     - name: Configure AWS credentials from Production account
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: arn:aws:iam::434059838337:role/service-role/test_lambda_role
         aws-region: ap-northeast-3
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+    - name: Get S3 Bckets
+      run: aws s3 ls --region ap-northeast-3
         
     - name: AWS Lambda Deployment
       run: aws lambda update-function-code --function-name test_lambda --zip-file fileb://lambda_function.py.zip --region ap-northeast-3
