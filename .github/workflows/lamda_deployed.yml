@@ -25,6 +25,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
+    - name: Get S3 Bckets
+      run: aws s3 ls
+      
     - name: Configure AWS credentials from Production account
       uses: aws-actions/configure-aws-credentials@v1
       with:
