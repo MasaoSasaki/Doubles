@@ -41,7 +41,7 @@ jobs:
         role-duration-seconds: 1200
           
     - name: Get S3 Bckets
-      run: aws s3 ls --region ap-northeast-3
+      run: aws s3 ls --region ap-northeast-1
         
     - name: AWS Lambda Deployment
       run: aws lambda update-function-code --function-name test_lambda --zip-file fileb://lambda_function.py.zip --region ap-northeast-3
