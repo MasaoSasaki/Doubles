@@ -32,11 +32,11 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Configure AWS credentials from Production account
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@b8c74de753fbcb4868bf2011fb2e15826ce973af
       with:
         aws-region: ap-northeast-1
         role-to-assume: arn:aws:iam::${{ secrets.AWS_IAM_ACCOUNT_ID }}:role/GithubActionRole
-        role-duration-seconds: 1200
+#         role-duration-seconds: 1200
     - run: aws sts get-caller-identity
         
     - name: AWS Lambda Deployment
