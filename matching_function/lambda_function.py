@@ -9,10 +9,10 @@ import random
 import copy
 
 def lambda_handler(event, context):
-  n = event['n']
-  r = event['r']
+  n = int(event['input']["n"])
+  r = int(event['input']['r'])
 
-# 関数宣言----------------------------------------------------
+  # 関数宣言----------------------------------------------------
   # 順列
   def permutations_count(n, r):
     return math.factorial(n) // math.factorial(n - r)
@@ -51,6 +51,7 @@ def lambda_handler(event, context):
   def create_match_list_pattern(n):
     item = 0
     match_list = []
+    print(range(1, n + 1))
     n_array = list(range(1, n + 1))
     for i, permutation_match in enumerate(itertools.permutations(n_array)):
       permutation_match = list(permutation_match)
@@ -68,7 +69,7 @@ def lambda_handler(event, context):
       match_list_dictionary = [change_array_to_dictionary(match_item) for match_item in match_list]
       random.shuffle(match_list_dictionary)
     return match_list_dictionary, item
-# 関数宣言----------------------------------------------------
+  # 関数宣言----------------------------------------------------
 
   match_list_pattern = create_match_list_pattern(n)
 
@@ -80,11 +81,10 @@ def lambda_handler(event, context):
   doubles_pair = "ダブルス数: " + str(get_doubles_count(n))
   print(factorial, permutations, combinations, '\033[32m'+doubles_pair+'\033[0m')
 
-  return factorial, permutations, combinations
-
-if platform.system() == "Darwin":
-  event = {
-    "n": 4,
-    "r": 3
+  return {
+    "statusCode": 200,
+    "body": json.dumps({
+        "message": "Success!!",
+        "arguments": match_list_pattern
+    })
   }
-  lambda_handler(event, 0)
